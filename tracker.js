@@ -36,7 +36,7 @@ function start() {
 		switch (response.option) {
 			//Minimum requirements
 			case "View all employees":
-				// viewAllEmployees();
+				viewAllEmployees();
 				break;
 			case "View all roles":
 				viewRoles();
@@ -104,7 +104,7 @@ function addRole() {
 	var depts = [];
 	connection.query("SELECT * FROM departments", function (err, data) {
 		if (err) throw err;
-		// console.log(data);
+
 		data.forEach(element => {
 			depts.push(element.dept_name);
 		});
@@ -131,31 +131,40 @@ function addRole() {
 				choices: depts
 			}
 		]).then(function (response) {
-			console.log(response);
-
+			connection.query("SELECT id FROM departments WHERE dept_name = ?", [response.choice], function (err, data) {
+				if (err) throw err;
+				
+				connection.query("INSERT INTO roles SET ?", {
+					title: response.role_name,
+					salary: response.money,
+					department_id: data[0].id
+				}, function (err, data) {
+					if (err) throw err;
+					start();
+				});
+			});
 		});
-	});
+	});x
 }
 
 function viewRoles() {
-	var query = "SELECT roles.id, roles.title, roles.salary, departments.name FROM roles LEFT JOIN departments ON roles.department_id=departments.id";
+	var query = "SELECT roles.id, roles.title, roles.salary, departments.dept_name FROM roles LEFT JOIN departments ON roles.department_id=departments.id";
 	connection.query(query, function (err, data) {
 		if (err) throw err;
-		console.log(data);
-		console.table(['id', 'title', 'salary', 'department'], data);
+		console.table(data);
 		start();
 	})
 }
 
 function viewAllEmployees() {
-	// var query = "SELECT employees.id, employees.first_name, employees.last_name, role.title, department.name, role.salary, employees.manager_id ";
-	// query += "FROM employees"
-	// connection.query(query, function (err, data) {
-	// 	if (err) throw err;
-	// 	// console.log(data);
-	// 	console.table(data);
-	// 	start();
-	// });
+	var query = "SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name, employees.manager_id ";
+	query += "FROM employees LEFT JOIN roles ON employees.role_id = roles.id ";
+	query += "LEFT JOIN departments ON roles.department_id = departments.id"
+	connection.query(query, function (err, data) {
+		if (err) throw err;
+		console.table(data);
+		start();
+	});
 }
 
 
