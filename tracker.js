@@ -47,6 +47,7 @@ function start() {
 			case "Add employee":
 				break;
 			case "Add role":
+				addRole();
 				break;
 			case "Add department":
 				addDepartment();
@@ -100,14 +101,48 @@ function viewDepartments() {
 }
 
 function addRole() {
+	var depts = [];
+	connection.query("SELECT * FROM departments", function (err, data) {
+		if (err) throw err;
+		// console.log(data);
+		data.forEach(element => {
+			depts.push(element.dept_name);
+		});
 
+		inquirer.prompt([
+			{
+				message: "Enter role:",
+				type: "input",
+				name: "role_name"
+			},
+			{
+				message: "How much does this role make?",
+				type: "input",
+				name: "money",
+				validation: function (value) {
+					if (isNaN(value === false)) { return true; }
+					return false;
+				}
+			},
+			{
+				message: "Which department would you like to add a role to?",
+				type: "list",
+				name: "choice",
+				choices: depts
+			}
+		]).then(function (response) {
+			console.log(response);
+
+		});
+	});
 }
 
 function viewRoles() {
-	var query = "SELECT * FROM roles";
-	connection.query(query, function(err, data) {
-		if(err) throw err;
-		console.table(data);
+	var query = "SELECT roles.id, roles.title, roles.salary, departments.name FROM roles LEFT JOIN departments ON roles.department_id=departments.id";
+	connection.query(query, function (err, data) {
+		if (err) throw err;
+		console.log(data);
+		console.table(['id', 'title', 'salary', 'department'], data);
 		start();
 	})
 }
