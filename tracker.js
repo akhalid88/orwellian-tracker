@@ -107,10 +107,6 @@ function viewDepartments() {
 	});
 }
 
-function addEmployee() {
-
-}
-
 function addRole() {
 	var depts = [];
 	connection.query("SELECT * FROM departments", function (err, data) {
@@ -165,7 +161,7 @@ function addDepartment() {
 		name: "answer"
 	}).then(function (response) {
 		var query = "INSERT INTO departments SET ?";
-		connection.query(query, { name: response.answer }, function (err, data) {
+		connection.query(query, { dept_name: response.answer }, function (err, data) {
 			if (err) throw err;
 			console.log(data.affectedRows + " department inserted!\n")
 			start();
@@ -174,40 +170,12 @@ function addDepartment() {
 }
 
 function updateEmployeeRole() {
-	// var emps = [];
-	// var rols = [];
-	// connection.query("SELECT * FROM employees", function (err, data) {
-	// 	if (err) throw err;
-	// 	data.forEach(element => emps.push(element.id + ". " + element.first_name + " " + element.last_name));
-	// 	console.log(emps);
-	// connection.query("SELECT * FROM roles", function (err, data) {
-	// 	if (err) throw err;
-	// 	data.forEach(element => rols.push(element.id + ". " + element.title));
-	// 	console.log(rols);
-	// });
-	// });
-
-
-	// var emps = selectEmployees("employees", "first_name", "last_name", function (data) {
-	// 	console.log(data);
-	// 	return data;
-	// });
-	// var rols = selectRoles("roles", "title", function (data) {
-	// 	console.log(data);
-	// 	return data;
-	// });
-
-	console.log("OUTSIDE");
-	// console.log(emps);
-	// console.log(rols);
-
 	inquirer.prompt([
 		{
 			message: "Select an employee to update:",
 			type: "list",
 			name: "person",
 			choices: selectEmployees("employees", "first_name", "last_name", function (data) {
-				console.log(typeof data);
 				return Object.values(data);
 			})
 		},
@@ -216,13 +184,10 @@ function updateEmployeeRole() {
 			type: "list",
 			name: "role",
 			choices: selectRoles("roles", "title", function (data) {
-				console.log(typeof data);
 				return Object.values(data);
 			})
 		}
 	]).then(function (response) {
-		console.log("HERE");
-		console.log(response);
 	});
 }
 
@@ -231,11 +196,7 @@ function selectEmployees(table, column1, column2, cb) {
 	connection.query(query, [column1, column2, table], function (err, res) {
 		if (err) throw err;
 		var data = [];
-		// console.log(res);
-		// res.forEach(element => data.push(element.id + ". " + element.first_name + " " + element.last_name));
 		res.forEach(element => data.push(element["CONCAT(id, '. ', `first_name`, ' ', `last_name`)"]));
-		console.log("WHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT");
-		console.log(typeof data);
 		cb(data);
 	});
 }
@@ -245,8 +206,6 @@ function selectRoles(table, column1, cb) {
 	connection.query(query, [column1, table], function (err, res) {
 		if (err) throw err;
 		var data = [];
-		console.log(res);
-		// res.forEach(element => data.push(element.id + ". " + element.title));
 		res.forEach(element => data.push(element["CONCAT(id, '. ', `title`)"]));
 		cb(data);
 	});
@@ -255,34 +214,3 @@ function selectRoles(table, column1, cb) {
 function callBack(result) {
 	return result;
 }
-
-		///
-
-		// var empId = response.person.split(". ");
-		// var empName = empId[1].toString();
-		// empId = parseInt(empId[0]);
-		// console.log("ID: ")
-		// console.log(empId);
-		// console.log("Name");
-		// console.log(empName);
-
-		// connection.query(query, [empId], function (err, res) {
-		// 	if (err) throw err;
-		// 	var rls = [];
-		// 	res.forEach(element => {
-		// 		rls.push(element.id + ". " + element.title);
-		// 	});
-		// 	console.log("HERE");
-		// 	console.log(empId);
-
-		// .then(function (answer) {
-		// 		var roleId = answer.roley.split(". ");
-		// 		var query = "UPDATE employees SET ? WHERE id = ?";
-		// 		console.log(roleId);
-		// 		console.log(empdId);
-
-		// 		connection.query(query, { role_id: roleId[0], id: empId }, function (err, dump) {
-		// 			console.log(dump);
-		// 		});
-			// });
-		// });
