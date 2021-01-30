@@ -92,7 +92,7 @@ function addDepartment() {
 }
 
 function viewDepartments() {
-	var query = "SELECT * FROM departments";
+	var query = "SELECT id, dept_name AS department FROM departments";
 	connection.query(query, function (err, data) {
 		if (err) throw err;
 		console.table(data);
@@ -157,42 +157,19 @@ function viewRoles() {
 }
 
 function viewAllEmployees() {
-	var query = "SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name, employees.manager_id ";
-	query += "FROM employees LEFT JOIN roles ON employees.role_id = roles.id ";
-	query += "LEFT JOIN departments ON roles.department_id = departments.id"
+
+
+	var query = "SELECT e.id, e.first_name, e.last_name, r.title, r.salary, d.dept_name, CONCAT(m.first_name,' ', m.last_name) AS manager ";
+	query += "FROM employees AS e LEFT JOIN roles AS r ON e.role_id = r.id ";
+	query += "LEFT JOIN departments AS d ON r.department_id = d.id ";
+	query += "LEFT JOIN employees AS m ON e.manager_id = m.id";
+
+	// var query = "SELECT employees.id, employees.first_name, employees.last_name, roles.title, roles.salary, departments.dept_name, employees.manager_id ";
+	// query += "FROM employees LEFT JOIN roles ON employees.role_id = roles.id ";
+	// query += "LEFT JOIN departments ON roles.department_id = departments.id";
 	connection.query(query, function (err, data) {
 		if (err) throw err;
 		console.table(data);
 		start();
 	});
 }
-
-
-
-
-//::MINIMUM:://
-//What would you like to do?
-	//ADD employees
-		// first_name, last_name, role_id, manager_id
-	//ADD roles
-		//title, salary, dept_id
-	//ADD department
-		// name
-
-	//VIEW employees
-	//VIEW roles
-	//VIEW department
-
-	//UPDATE employee roles
-
-
-	//::BONUS:://
-	//UPDATE employee managers
-
-	//VIEW employees by manager
-
-	//DELETE employees
-	//DELETE roles
-	//DELETE departments
-
-	//VIEW utilized budget
