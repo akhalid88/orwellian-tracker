@@ -7,10 +7,11 @@
 2. [Deployed link](#deployed-link)
 3. [Installation](#installation)
 4. [Usage](#usage)
-5. [Licenses](#licenses)
-6. [Contributing](#contributing)
-7. [Tests](#tests)
-8. [Questions](#questions)
+5. [Code Snippets](#code-snippets)
+6. [Licenses](#licenses)
+7. [Contributing](#contributing)
+8. [Tests](#tests)
+9. [Questions](#questions)
 
 -----------------------
 ## Description
@@ -43,7 +44,7 @@ node tracker.js
 
 This project taught me a lot about SQL. The most interesting bit of SQL query that I performed was my request to view all employees. I wanted to obtain the employee info along with their role and department info. This was easy enough with a couple of **LEFT JOIN** query commands. The next thing I wanted to get was the manager name, however this posed a few problems. For 1, how to get data from a self-referencing table and 2, how to relabel two columns to appear as one.
 
-The first issue was solved by aliasing the second reference to the employees table <mark>LEFT JOIN employees AS m</mark>. This allows me to reference the employees table a second time with a key of **m** where needed.
+The first issue was solved by aliasing the second reference to the employees table <mark>LEFT JOIN employees AS *m*</mark>. This allows me to reference the employees table a second time with a key of **m** where needed.
 
 The second issue was solved using the CONCAT command in <mark>CONCAT(m.first_name,' ',m.last_name) AS manager</mark>
 
@@ -54,14 +55,13 @@ function viewAllEmployees() {
 	query += "FROM employees AS e LEFT JOIN roles AS r ON e.role_id = r.id ";
 	query += "LEFT JOIN departments AS d ON r.department_id = d.id ";
 	query += "LEFT JOIN employees AS m ON e.manager_id = m.id";
-	connection.query(query, function (err, data) {
+	connection.query(query, function (err, data) {d
 		if (err) throw err;
 		console.table(data);
 		start();
 	});
 }
 ```
-
 
 -----------------------
 ## Licenses
